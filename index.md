@@ -1,24 +1,24 @@
-<!DOCTYPE html>
-<html lang="">
+<!doctype html>
+<html lang="en">
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1" name="viewport">
-    <title>XKTLoaderPlugin - Loading an IFC Model from the File System</title>
+    <meta charset="utf-8">
+    <title>XKTLoaderPlugin - Loading a Model from the File System</title>
     <link href="css/styles.css" rel="stylesheet" type="text/css"/>
 
-   
+    <style>
+        #myCanvas {
+            width: 100%;
+            height: 100%;
+            background: lightBlue;
+        }
+    </style>
 
 </head>
+
 <body>
-
 <canvas id="myCanvas"></canvas>
-
-<canvas id="myNavCubeCanvas"></canvas>
-
-<div id="treeViewContainer"></div>
-
 <div id="info">
-    <h1>XKTLoaderPlugin - Loading an IFC4 Model from the File System</h1><br>
+    <h1>XKTLoaderPlugin - Loading an IFC Model from the File System</h1><br>
     <ul>
         <li>
             <div id="time">Loading JavaScript modules...</div>
@@ -32,22 +32,12 @@
                target="_other">XKTLoaderPlugin</a>
         </li>
         <li>
-            <a href="./../docs/class/src/plugins/TreeViewPlugin/TreeViewPlugin.js~TreeViewPlugin.html"
-               target="_other">TreeViewPlugin</a>
-        </li>
-        <li>
-            <a href="./../docs/class/src/plugins/NavCubePlugin/NavCubePlugin.js~NavCubePlugin.html"
-               target="_other">NavCubePlugin</a>
-        </li>
-        <li>
-            <a href="http://openifcmodel.cs.auckland.ac.nz/Model/Details/316"
+            <a href="http://openifcmodel.cs.auckland.ac.nz/Model/Details/301"
                target="_other">Model source</a>
         </li>
     </ul>
 </div>
-
 </body>
-
 <script type="module">
 
     //------------------------------------------------------------------------------------------------------------------
@@ -56,12 +46,9 @@
 
     import {Viewer} from "../src/viewer/Viewer.js";
     import {XKTLoaderPlugin} from "../src/plugins/XKTLoaderPlugin/XKTLoaderPlugin.js";
-    import {AmbientLight} from '../src/viewer/scene/lights/AmbientLight.js';
-    import {NavCubePlugin} from "../src/plugins/NavCubePlugin/NavCubePlugin.js";
-    import {TreeViewPlugin} from "../src/plugins/TreeViewPlugin/TreeViewPlugin.js";
 
     //------------------------------------------------------------------------------------------------------------------
-    // Create a Viewer, arrange the camera, tweak x-ray and highlight materials
+    // Create a Viewer, arrange the camera
     //------------------------------------------------------------------------------------------------------------------
 
     const viewer = new Viewer({
@@ -69,101 +56,30 @@
         transparent: true
     });
 
-    viewer.cameraControl.followPointer = true;
+    viewer.scene.camera.eye = [10.45, 17.38, -98.31];
+    viewer.scene.camera.look = [43.09, 0.5, -26.76];
+    viewer.scene.camera.up = [0.06, 0.96, 0.16];
 
-    viewer.scene.camera.eye = [-66.26, 105.84, -281.92];
-    viewer.scene.camera.look = [42.45, 49.62, -43.59];
-    viewer.scene.camera.up = [0.05, 0.95, 0.15];
-
-    viewer.scene.xrayMaterial.fillAlpha = 0.1;
-    viewer.scene.xrayMaterial.fillColor = [0, 0, 0];
-    viewer.scene.xrayMaterial.edgeAlpha = 0.4;
-    viewer.scene.xrayMaterial.edgeColor = [0, 0, 0];
-
-    viewer.scene.highlightMaterial.fill = false;
-    viewer.scene.highlightMaterial.fillAlpha = 0.3;
-    viewer.scene.highlightMaterial.edgeColor = [1, 1, 0];
-
-    new AmbientLight(viewer.scene, {
-        color: [0.35, 0.35, 0.2],
-        intensity: 1.0
-    });
-
-    //------------------------------------------------------------------------------------------------------------------
-    // Create a NavCube
-    //------------------------------------------------------------------------------------------------------------------
-
-    new NavCubePlugin(viewer, {
-        canvasId: "myNavCubeCanvas",
-        visible: true,
-        size: 250,
-        alignment: "bottomRight",
-        bottomMargin: 100,
-        rightMargin: 10
-    });
-
-    //------------------------------------------------------------------------------------------------------------------
-    // Create an IFC structure tree view
-    //------------------------------------------------------------------------------------------------------------------
-
-    const treeView = new TreeViewPlugin(viewer, {
-        containerElement: document.getElementById("treeViewContainer"),
-        autoExpandDepth: 3 // Initially expand tree three nodes deep
-    });
-
-    //------------------------------------------------------------------------------------------------------------------
-    // Load model
-    //------------------------------------------------------------------------------------------------------------------
+    //----------------------------------------------------------------------------------------------------------------------
+    // Create an XKT loader plugin, load a model, fit to view
+    //----------------------------------------------------------------------------------------------------------------------
 
     const xktLoader = new XKTLoaderPlugin(viewer);
 
-    const model = xktLoader.load({
-        id: "myModel",
-        src: "./../assets/models/xkt/HolterTower/HolterTower.xkt",
-        metaModelSrc: "./../assets/metaModels/HolterTower/HolterTower.json", // Creates a MetaObject instances in scene.metaScene.metaObjects
-        excludeUnclassifiedObjects: true,
-        edges: true
-    });
-
-    const t0 = performance.now();
+    var t0 = performance.now();
 
     document.getElementById("time").innerHTML = "Loading model...";
 
-    model.on("loaded", function () {
-        const t1 = performance.now();
-        document.getElementById("time").innerHTML = "Model loaded in " + Math.floor(t1 - t0) / 1000.0 + " seconds<br>Objects: " + model.numEntities;
+    const model = xktLoader.load({
+        id: "myModel",
+        src: "./../assets/models/xkt/OTCConferenceCenter/OTCConferenceCenter.xkt",
+        metaModelSrc: "./../assets/metaModels/OTCConferenceCenter/metaModel.json", // Creates a MetaObject instances in scene.metaScene.metaObjects
+        edges: true
     });
 
-    //------------------------------------------------------------------------------------------------------------------
-    // Mouse over entities to highlight them
-    //------------------------------------------------------------------------------------------------------------------
-
-    var lastEntity = null;
-
-    viewer.scene.input.on("mousemove", function (coords) {
-
-        var hit = viewer.scene.pick({
-            canvasPos: coords
-        });
-
-        if (hit) {
-
-            if (!lastEntity || hit.entity.id !== lastEntity.id) {
-
-                if (lastEntity) {
-                    lastEntity.highlighted = false;
-                }
-
-                lastEntity = hit.entity;
-                hit.entity.highlighted = true;
-            }
-        } else {
-
-            if (lastEntity) {
-                lastEntity.highlighted = false;
-                lastEntity = null;
-            }
-        }
+    model.on("loaded", () => {
+        var t1 = performance.now();
+        document.getElementById("time").innerHTML = "Model loaded in " + Math.floor(t1 - t0) / 1000.0 + " seconds<br>Objects: " + model.numEntities;
     });
 
 </script>
