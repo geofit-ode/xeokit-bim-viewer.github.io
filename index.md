@@ -1,40 +1,13 @@
 <!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>XKTLoaderPlugin - Loading a Model from the File System</title>
-    <link href="css/styles.css" rel="stylesheet" type="text/css"/>
-
-    <style>
-        #myCanvas {
-            width: 100%;
-            height: 100%;
-            background: lightBlue;
-        }
-    </style>
-
-</head>
-
+<html>
 <body>
 <canvas id="myCanvas"></canvas>
 <div id="info">
-    <h1>XKTLoaderPlugin - Loading an IFC Model from the File System</h1><br>
     <ul>
         <li>
             <div id="time">Loading JavaScript modules...</div>
         </li>
-        <li>
-            <a href="./../docs/class/src/viewer/Viewer.js~Viewer.html"
-               target="_other">Viewer</a>
-        </li>
-        <li>
-            <a href="./../docs/class/src/plugins/XKTLoaderPlugin/XKTLoaderPlugin.js~XKTLoaderPlugin.html"
-               target="_other">XKTLoaderPlugin</a>
-        </li>
-        <li>
-            <a href="http://openifcmodel.cs.auckland.ac.nz/Model/Details/301"
-               target="_other">Model source</a>
-        </li>
+
     </ul>
 </div>
 </body>
@@ -72,8 +45,8 @@
 
     const model = xktLoader.load({
         id: "myModel",
-        src: "./1261.xkt",
-        metaModelSrc: "./1261.json", // Creates a MetaObject instances in scene.metaScene.metaObjects
+        src: "1261.xkt",
+        metaModelSrc: "1261.json", // Creates a MetaObject instances in scene.metaScene.metaObjects
         edges: true
     });
 
