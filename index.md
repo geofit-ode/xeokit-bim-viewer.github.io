@@ -45,7 +45,7 @@
     //------------------------------------------------------------------------------------------------------------------
 
     import {Viewer} from "../src/viewer/Viewer.js";
-    import {XKTLoaderPlugin} from "../src/plugins/XKTLoaderPlugin/XKTLoaderPlugin.js";
+    import {XKTLoaderPlugin} from "../src/plugins/XKTLoaderPlugin.js";
 
     //------------------------------------------------------------------------------------------------------------------
     // Create a Viewer, arrange the camera
