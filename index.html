@@ -146,7 +146,7 @@
 
     import {Viewer} from "../src/viewer/Viewer.js";
     import {XKTLoaderPlugin} from "../src/plugins/XKTLoaderPlugin/XKTLoaderPlugin.js";
-    import {NavCubePlugin} from "../src/plugins/NavCubePlugin/NavCubePlugin.js";
+    import {NavCubePlugin} from "https://xeokit.github.io/xeokit-sdk/src/plugins/NavCubePlugin/NavCubePlugin.js";
     import {TreeViewPlugin} from "../src/plugins/TreeViewPlugin/TreeViewPlugin.js";
 
     //------------------------------------------------------------------------------------------------------------------
@@ -204,8 +204,8 @@
 
     const model = xktLoader.load({
         id: "myModel",
-        src: "../assets/models/xkt/duplex/duplex.xkt",
-        metaModelSrc: "./../assets/metaModels/duplex/metaModel.json", // Creates a MetaObject instances in scene.metaScene.metaObjects
+        src: "./duplex/duplex.xkt",
+        metaModelSrc: "./metaModel.json", // Creates a MetaObject instances in scene.metaScene.metaObjects
         excludeTypes: ["IfcSpace"],
         edges: true
     });
