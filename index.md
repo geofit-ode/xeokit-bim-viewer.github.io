@@ -72,8 +72,8 @@
 
     const model = xktLoader.load({
         id: "myModel",
-        src: "./../assets/models/xkt/OTCConferenceCenter/OTCConferenceCenter.xkt",
-        metaModelSrc: "./../assets/metaModels/OTCConferenceCenter/metaModel.json", // Creates a MetaObject instances in scene.metaScene.metaObjects
+        src: "./1261.xkt",
+        metaModelSrc: "./1261.json", // Creates a MetaObject instances in scene.metaScene.metaObjects
         edges: true
     });
 
