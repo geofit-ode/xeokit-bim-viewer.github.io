@@ -144,11 +144,6 @@
     // Import the modules we need for this example
     //------------------------------------------------------------------------------------------------------------------
     
-    //    import {Viewer} from "../src/viewer/Viewer.js";
-    //    import {XKTLoaderPlugin} from "../src/plugins/XKTLoaderPlugin/XKTLoaderPlugin.js";
-    //    import {NavCubePlugin} from "https://xeokit.github.io/xeokit-sdk/src/plugins/NavCubePlugin/NavCubePlugin.js";
-    //    import {TreeViewPlugin} from "../src/plugins/TreeViewPlugin/TreeViewPlugin.js";
-
     import {Viewer} from "https://xeokit.github.io/xeokit-sdk//src/viewer/Viewer.js";
     import {XKTLoaderPlugin} from "https://xeokit.github.io/xeokit-sdk/src/plugins/XKTLoaderPlugin/XKTLoaderPlugin.js";
     import {AmbientLight} from 'https://xeokit.github.io/xeokit-sdk/src/viewer/scene/lights/AmbientLight.js';
@@ -210,14 +205,8 @@
 
     const model = xktLoader.load({
         id: "myModel",
-        src: "./duplex/duplex.xkt",
-        metaModelSrc: "./duplex/metaModel.json", // Creates a MetaObject instances in scene.metaScene.metaObjects
-    //       src: "./1261/1261.xkt",
-    //       metaModelSrc: "./1261/1261.json",
-    //       src: "https://xeokit.github.io/xeokit-sdk/assets/models/xkt/duplex/duplex.xkt",
-    //       metaModelSrc: "https://xeokit.github.io/xeokit-sdk/assets/models/xkt/duplex/metaModel.json", // Creates a MetaObject instances in scene.metaScene.metaObjects
-   
-
+        src: "https://xeokit.github.io/xeokit-sdk/assets/models/xkt/duplex/duplex.xkt",
+        metaModelSrc: "https://xeokit.github.io/xeokit-sdk/assets/models/xkt/duplex/metaModel.json", // Creates a MetaObject instances in scene.metaScene.metaObjects
         excludeTypes: ["IfcSpace"],
         edges: true
     });
