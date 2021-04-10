@@ -20,80 +20,7 @@
             right: 10px;
             z-index: 200000;
         }
-
-        /* ----------------------------------------------------------------------------------------------------------*/
-        /* TreeViewPlugin */
-        /* ----------------------------------------------------------------------------------------------------------*/
-
-        #treeViewContainer {
-            padding-top: 25px;
-            pointer-events: all;
-            height: 100%;
-            overflow-y: scroll;
-            overflow-x: hidden;
-            position: absolute;
-            background-color: rgba(255, 255, 255, 0.86);
-            color: black;
-            top: 0;
-            z-index: 200000;
-            float: left;
-            left: 0;
-            font-family: 'Roboto', sans-serif;
-            font-size: 15px;
-            user-select: none;
-            -ms-user-select: none;
-            -moz-user-select: none;
-            -webkit-user-select: none;
-            width: 550px;
-        }
-
-        #treeViewContainer ul {
-            list-style: none;
-            padding-left: 1.75em;
-        }
-
-        #treeViewContainer ul li {
-            position: relative;
-            width: 500px;
-        }
-
-        #treeViewContainer ul li a {
-            background-color: #eee;
-            border-radius: 50%;
-            color: #000;
-            display: inline-block;
-            height: 1.5em;
-            left: -1.5em;
-            position: absolute;
-            text-align: center;
-            text-decoration: none;
-            width: 1.5em;
-        }
-
-        #treeViewContainer ul li a.plus {
-            background-color: #ded;
-        }
-
-        #treeViewContainer ul li a.minus {
-            background-color: #eee;
-        }
-
-        #treeViewContainer ul li a:active {
-            top: 1px;
-        }
-
-        #treeViewContainer ul li span {
-            display: inline-block;
-            width: calc(100% - 50px);
-        }
-
-        #treeViewContainer .highlighted-node { /* Appearance of node highlighted with TreeViewPlugin#showNode() */
-            border: black solid 1px;
-            background: yellow;
-            color: black;
-            padding-left: 1px;
-            padding-right: 5px;
-        }
+        
     </style>
 
 </head>
@@ -109,26 +36,6 @@
         <li>
             <div id="time">Loading JavaScript modules...</div>
         </li>
-        <li>
-            <a href="./../docs/class/src/viewer/Viewer.js~Viewer.html"
-               target="_other">Viewer</a>
-        </li>
-        <li>
-            <a href="./../docs/class/src/plugins/XKTLoaderPlugin/XKTLoaderPlugin.js~XKTLoaderPlugin.html"
-               target="_other">XKTLoaderPlugin</a>
-        </li>
-        <li>
-            <a href="./../docs/class/src/plugins/TreeViewPlugin/TreeViewPlugin.js~TreeViewPlugin.html"
-               target="_other">TreeViewPlugin</a>
-        </li>
-        <li>
-            <a href="./../docs/class/src/plugins/NavCubePlugin/NavCubePlugin.js~NavCubePlugin.html"
-               target="_other">NavCubePlugin</a>
-        </li>
-        <li>
-            <a href="http://openifcmodel.cs.auckland.ac.nz/Model/Details/316"
-               target="_other">Model source</a>
-        </li>
     </ul>
 </div>
 
@@ -140,7 +47,7 @@
     // Import the modules we need for this example
     //------------------------------------------------------------------------------------------------------------------
 
-    import {Viewer} from "../src/viewer/Viewer.js";
+    import {Viewer} from "https://xeokit.github.io/xeokit-sdk//src/viewer/Viewer.js";
     import {XKTLoaderPlugin} from "https://xeokit.github.io/xeokit-sdk/src/plugins/XKTLoaderPlugin/XKTLoaderPlugin.js";
     import {AmbientLight} from 'https://xeokit.github.io/xeokit-sdk/src/viewer/scene/lights/AmbientLight.js';
     import {NavCubePlugin} from "https://xeokit.github.io/xeokit-sdk/src/plugins/NavCubePlugin/NavCubePlugin.js";
