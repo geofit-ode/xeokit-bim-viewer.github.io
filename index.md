@@ -1,256 +1,244 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1" name="viewport">
-    <title>XKTLoaderPlugin - Loading an IFC Model from the File System</title>
-    <link href="css/styles.css" rel="stylesheet" type="text/css"/>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <style>
+    <title>xeokit BIM Viewer</title>
 
-        #myCanvas {
-            background: #ffffff;
-        }
+    <!-- BIMViewer styles -->
+    <link rel="stylesheet" href="./lib/fontawesome-free-5.11.2-web/css/all.min.css" type="text/css"/>
+    <link rel="stylesheet" href="../css/BIMViewer.css" type="text/css"/>
 
-        #myNavCubeCanvas {
-            position: absolute;
-            width: 250px;
-            height: 250px;
-            bottom: 50px;
-            right: 10px;
-            z-index: 200000;
-        }
+    <!-- App style -->
+    <link rel="stylesheet" href="./css/style.css"/>
 
-        /* ----------------------------------------------------------------------------------------------------------*/
-        /* TreeViewPlugin */
-        /* ----------------------------------------------------------------------------------------------------------*/
-
-        #treeViewContainer {
-            padding-top: 25px;
-            pointer-events: all;
-            height: 100%;
-            overflow-y: scroll;
-            overflow-x: hidden;
-            position: absolute;
-            background-color: rgba(255, 255, 255, 0.86);
-            color: black;
-            top: 0;
-            z-index: 200000;
-            float: left;
-            left: 0;
-            font-family: 'Roboto', sans-serif;
-            font-size: 15px;
-            user-select: none;
-            -ms-user-select: none;
-            -moz-user-select: none;
-            -webkit-user-select: none;
-            width: 550px;
-        }
-
-        #treeViewContainer ul {
-            list-style: none;
-            padding-left: 1.75em;
-        }
-
-        #treeViewContainer ul li {
-            position: relative;
-            width: 500px;
-        }
-
-        #treeViewContainer ul li a {
-            background-color: #eee;
-            border-radius: 50%;
-            color: #000;
-            display: inline-block;
-            height: 1.5em;
-            left: -1.5em;
-            position: absolute;
-            text-align: center;
-            text-decoration: none;
-            width: 1.5em;
-        }
-
-        #treeViewContainer ul li a.plus {
-            background-color: #ded;
-        }
-
-        #treeViewContainer ul li a.minus {
-            background-color: #eee;
-        }
-
-        #treeViewContainer ul li a:active {
-            top: 1px;
-        }
-
-        #treeViewContainer ul li span {
-            display: inline-block;
-            width: calc(100% - 50px);
-        }
-
-        #treeViewContainer .highlighted-node { /* Appearance of node highlighted with TreeViewPlugin#showNode() */
-            border: black solid 1px;
-            background: yellow;
-            color: black;
-            padding-left: 1px;
-            padding-right: 5px;
-        }
-
-    </style>
+    <!-- App tooltips style -->
+    <link rel="stylesheet" href="./lib/backdrop.css"/>
 
 </head>
+
 <body>
 
-<canvas id="myCanvas"></canvas>
-
-<canvas id="myNavCubeCanvas"></canvas>
-
-<div id="treeViewContainer"></div>
-
-<div id="info">
-    <h1>XKTLoaderPlugin - Loading an IFC Model from the File System</h1><br>
-    <ul>
-        <li>
-            <div id="time">Loading JavaScript modules...</div>
-        </li>
-        <li>
-            <a href="./../docs/class/src/viewer/Viewer.js~Viewer.html"
-               target="_other">Viewer</a>
-        </li>
-        <li>
-            <a href="./../docs/class/src/plugins/XKTLoaderPlugin/XKTLoaderPlugin.js~XKTLoaderPlugin.html"
-               target="_other">XKTLoaderPlugin</a>
-        </li>
-        <li>
-            <a href="./../docs/class/src/plugins/TreeViewPlugin/TreeViewPlugin.js~TreeViewPlugin.html"
-               target="_other">TreeViewPlugin</a>
-        </li>
-        <li>
-            <a href="./../docs/class/src/plugins/NavCubePlugin/NavCubePlugin.js~NavCubePlugin.html"
-               target="_other">NavCubePlugin</a>
-        </li>
-        <li>
-            <a href="http://openifcmodel.cs.auckland.ac.nz/Model/Details/274"
-               target="_other">Model source</a>
-        </li>
-
-    </ul>
+<div id="myViewer" class="xeokit-busy-modal-backdrop">
+    <div id="myExplorer" class="active"></div>
+    <div id="myContent">
+        <div id="myToolbar"></div>
+        <canvas id="myCanvas"></canvas>
+    </div>
 </div>
-
+<canvas id="myNavCubeCanvas"></canvas>
 </body>
+
+<!-- App tooltips libraries-->
+<script src="./lib/popper.js"></script>
+<script src="./lib/tippy.js"></script>
 
 <script type="module">
 
-    //------------------------------------------------------------------------------------------------------------------
-    // Import the modules we need for this example
-    //------------------------------------------------------------------------------------------------------------------
-    
-    import {Viewer} from "https://xeokit.github.io/xeokit-sdk/src/viewer/Viewer.js";
-    import {XKTLoaderPlugin} from "https://xeokit.github.io/xeokit-sdk/src/plugins/XKTLoaderPlugin/XKTLoaderPlugin.js";
-    import {AmbientLight} from 'https://xeokit.github.io/xeokit-sdk/src/viewer/scene/lights/AmbientLight.js';
-    import {NavCubePlugin} from "https://xeokit.github.io/xeokit-sdk/src/plugins/NavCubePlugin/NavCubePlugin.js";
-    import {TreeViewPlugin} from "https://xeokit.github.io/xeokit-sdk/src/plugins/TreeViewPlugin/TreeViewPlugin.js";
-    
-    //------------------------------------------------------------------------------------------------------------------
-    // Create a Viewer, arrange the camera, tweak x-ray and highlight materials
-    //------------------------------------------------------------------------------------------------------------------
+    // Set up application
 
-    const viewer = new Viewer({
-        canvasId: "myCanvas",
-        transparent: true
-    });
+    import {Server, BIMViewer} from "../dist/main.js";
 
-    viewer.cameraControl.followPointer = true;
+    window.onload = function () {
 
-    viewer.camera.eye = [-3.933, 2.855, 27.018];
-    viewer.camera.look = [4.400, 3.724, 8.899];
-    viewer.camera.up = [-0.018, 0.999, 0.039];
+        const requestParams = getRequestParams();
 
-    viewer.cameraFlight.fitFOV = 15;
+        // Project to load into the viewer
+        const projectId = requestParams.projectId;
+        if (!projectId) {
+            return;
+        }
 
-    viewer.scene.xrayMaterial.fillAlpha = 0.1;
-    viewer.scene.xrayMaterial.fillColor = [0, 0, 0];
-    viewer.scene.xrayMaterial.edgeAlpha = 0.4;
-    viewer.scene.xrayMaterial.edgeColor = [0, 0, 0];
+        const enableEditModels = (requestParams.enableEditModels === "true");
 
-    viewer.scene.highlightMaterial.fillAlpha = 0.3;
-    viewer.scene.highlightMaterial.edgeColor = [1, 1, 0];
-
-    //------------------------------------------------------------------------------------------------------------------
-    // Create a NavCube
-    //------------------------------------------------------------------------------------------------------------------
-
-    new NavCubePlugin(viewer, {
-        canvasId: "myNavCubeCanvas",
-        visible: true,
-        size: 250,
-        alignment: "bottomRight",
-        bottomMargin: 100,
-        rightMargin: 10
-    });
-
-    //------------------------------------------------------------------------------------------------------------------
-    // Create an IFC structure tree view
-    //------------------------------------------------------------------------------------------------------------------
-
-    const treeView = new TreeViewPlugin(viewer, {
-        containerElement: document.getElementById("treeViewContainer"),
-        autoExpandDepth: 1 // Initially expand the root tree node
-    });
-
-    //------------------------------------------------------------------------------------------------------------------
-    // Load model and metadata
-    //------------------------------------------------------------------------------------------------------------------
-
-    const xktLoader = new XKTLoaderPlugin(viewer);
-
-    const model = xktLoader.load({
-        id: "myModel",
-        src: "https://xeokit.github.io/xeokit-sdk/assets/models/xkt/duplex/duplex.xkt",
-        metaModelSrc: "https://xeokit.github.io/xeokit-sdk/assets/metaModels/duplex/metaModel.json", // Creates a MetaObject instances in scene.metaScene.metaObjects
-        excludeTypes: ["IfcSpace"],
-        edges: true
-    });
-
-    const t0 = performance.now();
-    document.getElementById("time").innerHTML = "Loading model...";
-    model.on("loaded", function () {
-        const t1 = performance.now();
-        document.getElementById("time").innerHTML = "Model loaded in " + Math.floor(t1 - t0) / 1000.0 + " seconds<br>Objects: " + model.numEntities;
-    });
-
-    //------------------------------------------------------------------------------------------------------------------
-    // Mouse over Entities to highlight them
-    //------------------------------------------------------------------------------------------------------------------
-
-    var lastEntity = null;
-
-    viewer.scene.input.on("mousemove", function (coords) {
-
-        var hit = viewer.scene.pick({
-            canvasPos: coords
+        // Server client will load data from the file systems
+        const server = new Server({
+            dataDir: "./data"
         });
 
-        if (hit) {
+        // Create  BIMViewer that loads data via the Server
+        const bimViewer = new BIMViewer(server, {
+            canvasElement: document.getElementById("myCanvas"), // WebGL canvas
+            explorerElement: document.getElementById("myExplorer"), // Left panel
+            toolbarElement: document.getElementById("myToolbar"), // Toolbar
+            navCubeCanvasElement: document.getElementById("myNavCubeCanvas"),
+            busyModelBackdropElement: document.querySelector(".xeokit-busy-modal-backdrop"),
+            enableEditModels: enableEditModels
 
-            if (!lastEntity || hit.entity.id !== lastEntity.id) {
+        });
 
-                if (lastEntity) {
-                    lastEntity.highlighted = false;
-                }
-
-                lastEntity = hit.entity;
-                hit.entity.highlighted = true;
+        // Create tooltips on various HTML elements created by BIMViewer
+        tippy('[data-tippy-content]', {
+            appendTo: function () {
+                return document.querySelector('#myViewer')
             }
-        } else {
+        });
 
-            if (lastEntity) {
-                lastEntity.highlighted = false;
-                lastEntity = null;
+        // Configure our viewer
+        bimViewer.setConfigs({});
+
+        // Log info on whatever objects we click with the BIMViewer's Query tool
+        bimViewer.on("queryPicked", (event) => {
+            console.log("queryPicked: " + JSON.stringify(event, null, "\t"));
+        });
+
+        bimViewer.on("addModel", (event) => { // "Add" selected in Models tab's context menu
+            console.log("addModel: " + JSON.stringify(event, null, "\t"));
+        });
+
+        bimViewer.on("editModel", (event) => { // "Edit" selected in Models tab's context menu
+            console.log("editModel: " + JSON.stringify(event, null, "\t"));
+        });
+
+        bimViewer.on("deleteModel", (event) => { // "Delete" selected in Models tab's context menu
+            console.log("deleteModel: " + JSON.stringify(event, null, "\t"));
+        });
+
+        //--------------------------------------------------------------------------------------------------------------
+        // Process page request params, which set up initial viewer state
+        //--------------------------------------------------------------------------------------------------------------
+
+        // Viewer configurations
+        const viewerConfigs = requestParams.configs;
+        if (viewerConfigs) {
+            const configNameVals = viewerConfigs.split(",");
+            for (let i = 0, len = configNameVals.length; i < len; i++) {
+                const configNameValStr = configNameVals[i];
+                const configNameVal = configNameValStr.split(":");
+                const configName = configNameVal[0];
+                const configVal = configNameVal[1];
+                bimViewer.setConfig(configName, configVal);
             }
         }
-    });
+
+        // Load a project
+        bimViewer.loadProject(projectId, () => {
+
+                // The project may load one or models initially.
+
+                // Withe request params, we can also specify:
+                //  - models to load
+                // - explorer tab to open
+
+
+                const modelId = requestParams.modelId;
+                if (modelId) {
+                    bimViewer.loadModel(modelId);
+                }
+
+                const tab = requestParams.tab;
+                if (tab) {
+                    bimViewer.openTab(tab);
+                }
+
+                //
+                window.setInterval((function () {
+                    var lastHash = "";
+                    return function () {
+                        const currentHash = window.location.hash;
+                        if (currentHash !== lastHash) {
+                            parseHashParams();
+                            lastHash = currentHash;
+                        }
+                    };
+                })(), 200);
+            },
+            (errorMsg) => {
+                console.error(errorMsg);
+            });
+
+        function getRequestParams() {
+            var vars = {};
+            window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, (m, key, value) => {
+                vars[key] = value;
+            });
+            return vars;
+        }
+
+        function parseHashParams() {
+            const params = getHashParams();
+            const actionsStr = params.actions;
+            if (!actionsStr) {
+                return;
+            }
+            const actions = actionsStr.split(",");
+            if (actions.length === 0) {
+                return;
+            }
+            for (var i = 0, len = actions.length; i < len; i++) {
+                const action = actions[i];
+                switch (action) {
+                    case "focusObject":
+                        const objectId = params.objectId;
+                        if (!objectId) {
+                            console.error("Param expected for `focusObject` action: 'objectId'");
+                            break;
+                        }
+                        bimViewer.setAllObjectsSelected(false);
+                        bimViewer.setObjectsSelected([objectId], true);
+                        bimViewer.flyToObject(objectId, () => {
+                            // FIXME: Showing objects in tabs involves scrolling the HTML within the tabs - disable until we know how to scroll the correct DOM element. Otherwise, that function works OK
+
+                            // bimViewer.showObjectInObjectsTab(objectId);
+                            // bimViewer.showObjectInClassesTab(objectId);
+                            // bimViewer.showObjectInStoreysTab(objectId);
+                        });
+                        break;
+                    case "focusObjects":
+                        const objectIds = params.objectIds;
+                        if (!objectIds) {
+                            console.error("Param expected for `focusObjects` action: 'objectIds'");
+                            break;
+                        }
+                        const objectIdArray = objectIds.split(",");
+                        bimViewer.setAllObjectsSelected(false);
+                        bimViewer.setObjectsSelected(objectIdArray, true);
+                        bimViewer.viewFitObjects(objectIdArray, () => {
+                        });
+                        break;
+                    case "clearFocusObjects":
+                        bimViewer.setAllObjectsSelected(false);
+                        bimViewer.viewFitAll();
+                        // TODO: view fit nothing?
+                        break;
+                    case "openTab":
+                        const tabId = params.tabId;
+                        if (!tabId) {
+                            console.error("Param expected for `openTab` action: 'tabId'");
+                            break;
+                        }
+                        bimViewer.openTab(tabId);
+                        break;
+                    default:
+                        console.error("Action not supported: '" + action + "'");
+                        break;
+                }
+            }
+        }
+
+        function getHashParams() {
+            const hashParams = {};
+            let e;
+            const a = /\+/g;  // Regex for replacing addition symbol with a space
+            const r = /([^&;=]+)=?([^&;]*)/g;
+            const d = function (s) {
+                return decodeURIComponent(s.replace(a, " "));
+            };
+            const q = window.location.hash.substring(1);
+            while (e = r.exec(q)) {
+                hashParams[d(e[1])] = d(e[2]);
+            }
+            return hashParams;
+        }
+
+        window.bimViewer = bimViewer; // For debugging
+    };
+
 
 
 </script>
-</html>
 
+</html>
