@@ -205,8 +205,8 @@
 
     const model = xktLoader.load({
         id: "myModel",
-        src: "./../duplex/duplex.xkt",
-        metaModelSrc: "./../duplex/duplex.json", // Creates a MetaObject instances in scene.metaScene.metaObjects
+        src: "https://xeokit.github.io/xeokit-sdk/assets/models/xkt/duplex/duplex.xkt",
+        metaModelSrc: "https://xeokit.github.io/xeokit-sdk/assets/metaModels/duplex/metaModel.json", // Creates a MetaObject instances in scene.metaScene.metaObjects
         excludeTypes: ["IfcSpace"],
         edges: true
     });
@@ -253,3 +253,4 @@
 
 </script>
 </html>
+
