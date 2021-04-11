@@ -1,0 +1,27 @@
+{
+  "id": "1261",
+  "name": "GEOFIT",
+  "models": [
+    {
+      "id": "1261_",
+      "name": "1261 GEOFIT"
+    }
+  ],
+  "viewerConfigs": {
+    "cameraNear": "0.05",
+    "cameraFar": "3000.0",
+    "saoEnabled": "true",
+    "objectColorSource": "model"
+  },
+  "viewerContent": {
+    "modelsLoaded": [
+      "design"
+    ]
+  },
+  "viewerState": {
+    "tabOpen": "classes",
+    "expandObjectsTree": 1,
+    "expandClassesTree": 1,
+    "expandStoreysTree": 1
+  }
+}
